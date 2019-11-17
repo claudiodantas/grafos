@@ -1,0 +1,36 @@
+1-
+
+MATCH (c:CreditCard)-[:paysTo {status:"disputed"}]->(:Company)
+RETURN c ORDER BY c.idNumber
+____________________________________________________________
+2-
+
+MATCH (c:CreditCard)-[:belongsTo]->(p:Person), (co:Company)
+WHERE (c)-[:paysTo {status:"disputed"}]->(co)
+RETURN DISTINCT p.lastname, p.firstname
+ORDER BY p.lastname
+____________________________________________________________
+3-
+
+MATCH (c:CreditCard)-[:belongsTo]->(p:Person)
+WHERE NOT (c)-[:paysTo]->(:Company)
+RETURN p
+____________________________________________________________
+4- 
+
+MATCH (:CreditCard)-[t:paysTo {status:"disputed"}]->(co:Company)
+RETURN co, COUNT(t)
+ORDER BY COUNT(t) DESC
+____________________________________________________________
+5-
+
+MATCH (c:CreditCard)-[:belongsTo]->(p:Person), (co:Company), (c)-[:paysTo]->(co)
+WHERE p.country <> co.country
+RETURN p.lastname, p.country, co.name, co.country
+ORDER BY p.lastname
+____________________________________________________________
+6-
+
+MATCH (c:CreditCard)-[:belongsTo]->(p:Person), (c)-[t:paysTo {status:"disputed"}]->(:Company)
+RETURN COUNT(t), p.country
+ORDER BY COUNT(t) DESC
